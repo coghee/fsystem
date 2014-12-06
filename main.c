@@ -32,7 +32,7 @@ file *getfile(const char *name){
 }
 
 static int f_getattr(const char *path, struct stat *stbuf){
-	printf("@getattr");
+	printf("@getattr: %s\n",path);
 	int result = 0;
 	memset(stbuf, 0, sizeof (stbuf));
 
@@ -52,7 +52,7 @@ static int f_getattr(const char *path, struct stat *stbuf){
 }
 
 static int f_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi){
-	printf("@readdir");
+	printf("@readdir: %s\n", path);
 	int result = 0;
 	int i;
 	file *_file = getfile(path);
@@ -74,26 +74,26 @@ static int f_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
 }
 
 static int f_open(const char *path, struct fuse_file_info *fi){
-	printf("@open");
+	printf("@open: %s\n", path);
 	int result = 0;
 
 	return result;
 }
 
 static int f_read(const char *path, char *buf, size_t size, off_t offset){
-	printf("@read");
+	printf("@read: %s\n", path);
 	size = sizeof (char);
 
 	return size;
 }
 
 static int f_write(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi){
-	printf("@write");
+	printf("@write: %s\n", path);
 	return size;
 }
 
 static int f_create(const char *path, mode_t mode, struct  fuse_file_info *fi){
-	printf("@create");
+	printf("@create: %s\n", path);
 	int result = 0;
 
 	return result;
@@ -101,7 +101,7 @@ static int f_create(const char *path, mode_t mode, struct  fuse_file_info *fi){
 }
 
 static int f_unlink(const char *path){
-	printf("@unlink");
+	printf("@unlink: %s\n", path);
 	int result = 0;
 
 	return result;
