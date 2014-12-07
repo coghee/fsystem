@@ -47,6 +47,27 @@ file *getfile(const char *name){
 	return target_file;
 }
 
+int getfile_index(const char *name){
+	int i;
+	int result = -1;
+	if(name!=NULL){
+		for(i=0; i<file_count; i++){
+			file *iter_file = file_list[i];
+			if(iter_file != NULL){
+				if(strcmp(iter_file->name, name)==0){
+					printf("#getfile: %s, %d\n", name, i);
+					result = i;
+					break;
+				}else{
+					continue;
+				}
+			}
+			
+		}
+	}
+	return result;
+}
+
 static int f_getattr(const char *path, struct stat *stbuf){
 	printf("@getattr: %s\n",path);
 	int result = 0;
@@ -188,18 +209,29 @@ static int f_create(const char *path, mode_t mode, struct fuse_file_info *fi){
 static int f_unlink(const char *path){
 	printf("@unlink: %s\n", path);
 	int result = 0;
-	// file *_file = getfile(path);
+	int file_index = getfile_index(path);
+	file *_file = file_list[file_index];
+	int i;
 
-	// if(_file != NULL){
-	// 	_file->name = NULL;
-	// 	_file->data = NULL;
-	// 	free(_file->name);
-	// 	free(_file->data);
-	// 	_file = NULL;
-	// 	free(_file);
-	// }else{
-	// 	result = -ENOENT;
-	// }
+	if(_file != NULL){
+		// free(_file->name);
+		// free(_file->data);
+		_file->name = NULL;
+		_file->data = NULL;
+		
+		free(_file);
+		_file = NULL;
+
+		if(file_index < file_count - 1){
+			for(i=file_index; i<file_count; i++){
+				file_list[i] = file_list[i+1];
+			}
+		}
+		file_count--;
+		
+	}else{
+		result = -ENOENT;
+	}
 
 	return result;
 }
