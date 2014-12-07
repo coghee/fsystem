@@ -35,7 +35,7 @@ file *getfile(const char *name){
 			file *iter_file = file_list[i];
 			if(strcmp(iter_file->name, name)==0){
 				target_file = iter_file;
-				printf("#getfile: %s\n", name);
+				printf("#getfile: %s, %d\n", name, i);
 			}
 		}
 	}
@@ -61,7 +61,7 @@ static int f_getattr(const char *path, struct stat *stbuf){
 		stbuf->st_mtime = _file->mtime;
 		stbuf->st_uid = _file->uid;
 		stbuf->st_gid = _file->gid;
-		printf("#getattr: %s\n", _file->name);
+		printf("#getattr: %s %d\n", _file->name, _file->size);
 	} else
 		result = -ENOENT;
 	
@@ -80,7 +80,7 @@ static int f_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t 
 		filler(buf, ".", NULL, 0);
 		filler(buf, "..", NULL, 0);
 		for(i=0; i<file_count; i++){
-			filler(buf, file_list[i]->name, NULL, 0);
+			filler(buf, file_list[i]->name+1, NULL, 0);
 			printf("#filler: %s\n", file_list[i]->name);
 		}
 	}
@@ -101,6 +101,7 @@ static int f_open(const char *path, struct fuse_file_info *fi){
 	}else{
 		result = -ENOENT;
 	}
+	fi->fh = _file;
 	
 	return result;
 }
@@ -137,6 +138,7 @@ static int f_create(const char *path, mode_t mode, struct fuse_file_info *fi){
 		_file->uid = fuse_get_context()->uid;
 		_file->gid = fuse_get_context()->gid;
 		_file->mode = mode;
+		fi->fh = _file;
 	}
 	
 
