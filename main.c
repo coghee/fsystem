@@ -236,6 +236,21 @@ static int f_unlink(const char *path){
 	return result;
 }
 
+static int f_utimens(const char *path, const struct timespec tv[2]){
+	printf("@utimens: %s\n", path);
+	int result = 0;
+	file *_file = getfile(path);
+
+	if(_file != NULL){
+		_file->atime = tv[0].tv_sec;
+		_file->mtime = tv[1].tv_sec;
+	}else{
+		result = -ENOENT;
+	}
+
+	return result;
+}
+
 static int f_truncate(const char *path, off_t size){
 	printf("@truncate: %s\n", path);
 	int result = 0;
@@ -251,7 +266,8 @@ static struct fuse_operations f_oper = {
 	.write 		= f_write,
 	.create 		= f_create,
 	.unlink 		= f_unlink,
-	.truncate 	= f_truncate
+	.truncate 	= f_truncate,
+	.utimens 	= f_utimens
 
 };
 
