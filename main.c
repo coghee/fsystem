@@ -254,6 +254,25 @@ static int f_utimens(const char *path, const struct timespec tv[2]){
 static int f_truncate(const char *path, off_t size){
 	printf("@truncate: %s\n", path);
 	int result = 0;
+	file *_file = getfile(path);
+
+	if(_file != NULL){
+		time(&_file->mtime);
+		if(size == 0){
+			free(_file->data);
+			_file->data = NULL;
+			_file->size = 0;
+		}else{
+			printf("#before trunc - data: %s\n", _file->data);
+			char *data = (char*)realloc(_file->data, size);
+			if(data!=NULL){
+				_file->data = data;
+				_file->size = size;
+			}
+		}
+	}else{
+		result = -ENOENT;
+	}
 
 	return result;
 }
