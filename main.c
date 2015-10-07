@@ -289,7 +289,7 @@ static struct fuse_operations f_oper = {
 	.utimens 	= f_utimens
 
 };
-
+/**/
 int main(int argc, char *argv[]){
 	return fuse_main(argc, argv, &f_oper, NULL);
 }
